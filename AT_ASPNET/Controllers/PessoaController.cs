@@ -22,16 +22,23 @@ namespace AT_ASPNET.Controllers
         // GET: Pessoa
         public ActionResult Index()
         {
-            var pessoas = PessoaRepository.GetAll();
-            return View(pessoas);
+            var pessoa = PessoaRepository.GetNextBirthday();
+            return View(pessoa);
         }
 
-        //[Route("Pessoa/Buscar")]
-        //public ActionResult Search()
-        //{
-        //    var pessoa = pessoas.Where(pessoa => pessoa.Nome.Contains(HttpContext.Request.Form["Nome"], StringComparison.InvariantCultureIgnoreCase) || pessoa.Sobrenome.Contains(HttpContext.Request.Form["Nome"], StringComparison.InvariantCultureIgnoreCase));
-        //    return View(pessoa);
-        //}
+        [Route("Pessoa/Search")]
+        public ActionResult Search(string nome)
+        {
+            var pessoa = PessoaRepository.GetByName(nome);
+            return View(pessoa);
+        }
+
+        [Route("Pessoa/CompleteList")]
+        public ActionResult CompleteList()
+        {
+            var pessoa = PessoaRepository.GetAll();
+            return View(pessoa);
+        }
 
         //GET: Pessoa/Details/5
         [Route("Pessoa/Details/{id}")]

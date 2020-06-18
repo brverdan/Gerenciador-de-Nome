@@ -161,5 +161,130 @@ namespace AT_ASPNET.Repository
 
             return result.FirstOrDefault();
         }
+
+        public List<Pessoa> GetByName(string name)
+        {
+            List<Pessoa> result = new List<Pessoa>();
+
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+
+                var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario FROM Pessoa
+                             WHERE NomePessoa = @P1
+                ";
+
+                if (connection.State != System.Data.ConnectionState.Open)
+                    connection.Open();
+
+                SqlCommand sqlCommand = connection.CreateCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.Parameters.AddWithValue("P1", name);
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Pessoa pessoa = new Pessoa()
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Nome = reader["NomePessoa"].ToString(),
+                        Sobrenome = reader["SobrenomePessoa"].ToString(),
+                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
+                    };
+
+                    result.Add(pessoa);
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
+
+        public List<Pessoa> GetTodayBirthday()
+        {
+            List<Pessoa> result = new List<Pessoa>();
+            DateTime date = DateTime.Today;
+
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+
+                var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario FROM Pessoa
+                             WHERE MONTH(DataDeAniversario) = @P1 AND DAY(DataDeAniversario) = @P2
+                ";
+
+                if (connection.State != System.Data.ConnectionState.Open)
+                    connection.Open();
+
+                SqlCommand sqlCommand = connection.CreateCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.Parameters.AddWithValue("P1", date.Month);
+                sqlCommand.Parameters.AddWithValue("P2", date.Day);
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Pessoa pessoa = new Pessoa()
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Nome = reader["NomePessoa"].ToString(),
+                        Sobrenome = reader["SobrenomePessoa"].ToString(),
+                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
+                    };
+
+                    result.Add(pessoa);
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
+
+        public List<Pessoa> GetNextBirthday()
+        {
+            List<Pessoa> result = new List<Pessoa>();
+            DateTime date = DateTime.Today;
+
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+
+                var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario 
+                             FROM Pessoa
+                             WHERE (MONTH(DataDeAniversario) <> @P1 OR MONTH(DataDeAniversario) = @P1) 
+                             AND (DAY(DataDeAniversario) <> @P2 OR DAY(DataDeAniversario) = @P2)
+                             ORDER BY DATEDIFF (DAY, MONTH(DataDeAniversario), @P3 )
+                ";
+
+                if (connection.State != System.Data.ConnectionState.Open)
+                    connection.Open();
+
+                SqlCommand sqlCommand = connection.CreateCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.Parameters.AddWithValue("P1", date.Month);
+                sqlCommand.Parameters.AddWithValue("P2", date.Day);
+                sqlCommand.Parameters.AddWithValue("P3", date.Month);
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Pessoa pessoa = new Pessoa()
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Nome = reader["NomePessoa"].ToString(),
+                        Sobrenome = reader["SobrenomePessoa"].ToString(),
+                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
+                    };
+
+                    result.Add(pessoa);
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
     }
 }

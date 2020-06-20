@@ -87,7 +87,7 @@
                 string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
                 string nome = item.Nome;
                 string sobrenome = item.Sobrenome;
-                if (data != DateTime.Today.ToString("dd/MM/yyyy"))
+                if ((data.Substring(0,2) != DateTime.Today.ToString("dd/MM/yyyy").Substring(0,2)) && ((data.Substring(3, 2) != DateTime.Today.ToString("dd/MM/yyyy").Substring(3, 2)) || (data.Substring(3, 2) == DateTime.Today.ToString("dd/MM/yyyy").Substring(3, 2))))
                 {
                     <tr>
                         <td>

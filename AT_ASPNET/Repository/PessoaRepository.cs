@@ -239,7 +239,7 @@ namespace AT_ASPNET.Repository
                 connection.Close();
             }
 
-            return result;
+            return result.OrderBy(pessoa => pessoa.DataDeAniversario).ToList();
         }
 
         public List<Pessoa> GetNextBirthday()

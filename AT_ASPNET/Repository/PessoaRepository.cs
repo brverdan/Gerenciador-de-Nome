@@ -170,7 +170,7 @@ namespace AT_ASPNET.Repository
             {
 
                 var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario FROM Pessoa
-                             WHERE NomePessoa = @P1
+                             WHERE NomePessoa LIKE @P1 COLLATE SQL_Latin1_General_CP1_CI_AI OR SobrenomePessoa LIKE @P1 COLLATE SQL_Latin1_General_CP1_CI_AI
                 ";
 
                 if (connection.State != System.Data.ConnectionState.Open)
@@ -250,11 +250,10 @@ namespace AT_ASPNET.Repository
             using (var connection = new SqlConnection(this.ConnectionString))
             {
 
-                var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario 
-                             FROM Pessoa
-                             WHERE (MONTH(DataDeAniversario) <> @P1 OR MONTH(DataDeAniversario) = @P1) 
-                             AND (DAY(DataDeAniversario) <> @P2 OR DAY(DataDeAniversario) = @P2)
-                             ORDER BY DATEDIFF (DAY, MONTH(DataDeAniversario), @P3 )
+                var sql = @"SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario 
+                            FROM Pessoa
+                            WHERE (MONTH(DataDeAniversario) <> @P1 OR MONTH(DataDeAniversario) = @P1) 
+                            AND (DAY(DataDeAniversario) <> @P2 OR DAY(DataDeAniversario) = @P2)
                 ";
 
                 if (connection.State != System.Data.ConnectionState.Open)
@@ -264,7 +263,7 @@ namespace AT_ASPNET.Repository
                 sqlCommand.CommandText = sql;
                 sqlCommand.Parameters.AddWithValue("P1", date.Month);
                 sqlCommand.Parameters.AddWithValue("P2", date.Day);
-                sqlCommand.Parameters.AddWithValue("P3", date.Month);
+                sqlCommand.Parameters.AddWithValue("P3", date.Date);
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
 
@@ -284,7 +283,7 @@ namespace AT_ASPNET.Repository
                 connection.Close();
             }
 
-            return result;
+            return result.OrderBy(pessoa => pessoa.DiferencaAniversario()).ToList();
         }
     }
 }

@@ -11,5 +11,20 @@ namespace AT_ASPNET.Models
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public DateTime DataDeAniversario { get; set; }
+
+        public int DiferencaAniversario()
+        {
+            DateTime dataDeHoje = DateTime.Today;
+            DateTime proximaData = new DateTime(dataDeHoje.Year, DataDeAniversario.Month, DataDeAniversario.Day);
+
+            if (proximaData < dataDeHoje)
+            {
+                proximaData = proximaData.AddYears(1);
+            }
+
+            int diferencaDeDias = (proximaData - dataDeHoje).Days;
+
+            return diferencaDeDias;
+        }
     }
 }

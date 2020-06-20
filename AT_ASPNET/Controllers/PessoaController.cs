@@ -22,8 +22,11 @@ namespace AT_ASPNET.Controllers
         // GET: Pessoa
         public ActionResult Index()
         {
-            var pessoa = PessoaRepository.GetNextBirthday();
-            return View(pessoa);
+            var pessoasAniversariantesHoje = PessoaRepository.GetTodayBirthday();
+            ViewBag.PessoaHoje = pessoasAniversariantesHoje;
+            var pessoasProximoAniversario = PessoaRepository.GetNextBirthday();
+            ViewBag.PessoaProximo = pessoasProximoAniversario;
+            return View();
         }
 
         [Route("Pessoa/Search")]

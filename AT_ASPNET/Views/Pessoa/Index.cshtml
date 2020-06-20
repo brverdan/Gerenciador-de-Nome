@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
+    var listaAniversarianteHoje = ViewBag.PessoaHoje;
+    var listaAniversarianteProximos = ViewBag.PessoaProximo;
 }
 
 <h1>Index</h1>
@@ -34,18 +36,20 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model != null)
+        @if (listaAniversarianteHoje != null)
         {
 
-            @foreach (var item in Model)
+            @foreach (var item in listaAniversarianteHoje)
             {
                 string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
+                string nome = item.Nome;
+                string sobrenome = item.Sobrenome;
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nome)
+                        @nome
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Sobrenome)
+                        @sobrenome
                     </td>
                     <td>
                         @data
@@ -75,23 +79,28 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model != null)
+        @if (listaAniversarianteProximos != null)
         {
 
-            @foreach (var item in Model)
+            @foreach (var item in listaAniversarianteProximos)
             {
                 string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Nome)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Sobrenome)
-                    </td>
-                    <td>
-                        @data
-                    </td>
-                </tr>
+                string nome = item.Nome;
+                string sobrenome = item.Sobrenome;
+                if (data != DateTime.Today.ToString("dd/MM/yyyy"))
+                {
+                    <tr>
+                        <td>
+                            @nome
+                        </td>
+                        <td>
+                            @sobrenome
+                        </td>
+                        <td>
+                            @data
+                        </td>
+                    </tr>
+                }
             }
         }
     </tbody>

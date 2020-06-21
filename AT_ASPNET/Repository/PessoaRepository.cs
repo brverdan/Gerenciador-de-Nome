@@ -162,7 +162,7 @@ namespace AT_ASPNET.Repository
             return result.FirstOrDefault();
         }
 
-        public List<Pessoa> GetByName(string name)
+        public List<Pessoa> GetByName(string nome)
         {
             List<Pessoa> result = new List<Pessoa>();
 
@@ -178,7 +178,7 @@ namespace AT_ASPNET.Repository
 
                 SqlCommand sqlCommand = connection.CreateCommand();
                 sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", name);
+                sqlCommand.Parameters.AddWithValue("P1", nome);
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
 

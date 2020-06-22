@@ -101,7 +101,7 @@ namespace AT_ASPNET.Repository
                              WHERE NomePessoa LIKE '%' + @P1 + '%' COLLATE SQL_Latin1_General_CP1_CI_AI OR SobrenomePessoa LIKE '%' + @P1 + '%' COLLATE SQL_Latin1_General_CP1_CI_AI
                 ";
 
-                result = connection.Query<Pessoa>(sql, new { P1 = nome }).ToList();
+                result = connection.Query<Pessoa>(sql, new { P1 = nome.Trim() }).ToList();
             }
 
             return result;

@@ -11,9 +11,9 @@ namespace AT_ASPNET.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Nome { get; set; }
+        public string NomePessoa { get; set; }
         [Required]
-        public string Sobrenome { get; set; }
+        public string SobrenomePessoa { get; set; }
         [Required]
         public DateTime DataDeAniversario { get; set; }
 
@@ -21,7 +21,6 @@ namespace AT_ASPNET.Models
         {
             DateTime dataDeHoje = DateTime.Today;
             DateTime proximaData = new DateTime(dataDeHoje.Year, DataDeAniversario.Month, DataDeAniversario.Day);
-
             if (proximaData < dataDeHoje)
             {
                 proximaData = proximaData.AddYears(1);

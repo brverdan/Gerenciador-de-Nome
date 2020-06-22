@@ -14,7 +14,7 @@
 <p>
     <a asp-action="CompleteList">Complete List of All People</a>
 </p>
-<form asp-action="Search">
+<form asp-action="Search" method="get">
     <div class="form-group">
         <input type="text" name="Nome" placeholder="Buscar pelo nome" class="form-control" style="width:30%;" required />
         <input type="submit" value="Search" class="btn btn-primary" style="margin-top: 1%;" />
@@ -42,8 +42,8 @@
             @foreach (var item in listaAniversarianteHoje)
             {
                 string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
-                string nome = item.Nome;
-                string sobrenome = item.Sobrenome;
+                string nome = item.NomePessoa;
+                string sobrenome = item.SobrenomePessoa;
                 <tr>
                     <td>
                         @nome
@@ -85,8 +85,8 @@
             @foreach (var item in listaAniversarianteProximos)
             {
                 string data = item.DataDeAniversario.ToString("dd/MM/yyyy");
-                string nome = item.Nome;
-                string sobrenome = item.Sobrenome;
+                string nome = item.NomePessoa;
+                string sobrenome = item.SobrenomePessoa;
                 if ((data.Substring(0,2) != DateTime.Today.ToString("dd/MM/yyyy").Substring(0,2)) && ((data.Substring(3, 2) != DateTime.Today.ToString("dd/MM/yyyy").Substring(3, 2)) || (data.Substring(3, 2) == DateTime.Today.ToString("dd/MM/yyyy").Substring(3, 2))))
                 {
                     <tr>

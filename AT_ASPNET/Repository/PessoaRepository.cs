@@ -1,4 +1,5 @@
 ﻿using AT_ASPNET.Models;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -24,18 +25,7 @@ namespace AT_ASPNET.Repository
                              VALUES (@P1, @P2, @P3)
                 ";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", pessoa.Nome);
-                sqlCommand.Parameters.AddWithValue("P2", pessoa.Sobrenome);
-                sqlCommand.Parameters.AddWithValue("P3", pessoa.DataDeAniversario);
-
-                sqlCommand.ExecuteNonQuery();
-
-                connection.Close();
+                connection.Execute(sql, new { P1 = pessoa.NomePessoa, P2 = pessoa.SobrenomePessoa, P3 = pessoa.DataDeAniversario });
             }
         }
 
@@ -51,18 +41,7 @@ namespace AT_ASPNET.Repository
                              WHERE  Id = @P4 
                 ";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", pessoa.Nome);
-                sqlCommand.Parameters.AddWithValue("P2", pessoa.Sobrenome);
-                sqlCommand.Parameters.AddWithValue("P3", pessoa.DataDeAniversario);
-                sqlCommand.Parameters.AddWithValue("P4", pessoa.Id);
-                sqlCommand.ExecuteNonQuery();
-
-                connection.Close();
+                connection.Execute(sql, new { P1 = pessoa.NomePessoa, P2 = pessoa.SobrenomePessoa, P3 = pessoa.DataDeAniversario, P4 = pessoa.Id });
             }
         }
 
@@ -75,15 +54,7 @@ namespace AT_ASPNET.Repository
                              WHERE Id = @P1 
                 ";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", id);
-                sqlCommand.ExecuteNonQuery();
-
-                connection.Close();
+                connection.Execute(sql, new { P1 = id });
             }
         }
 
@@ -96,28 +67,7 @@ namespace AT_ASPNET.Repository
 
                 var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario FROM Pessoa";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Pessoa pessoa = new Pessoa()
-                    {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Nome = reader["NomePessoa"].ToString(),
-                        Sobrenome = reader["SobrenomePessoa"].ToString(),
-                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
-                    };
-
-                    result.Add(pessoa);
-                }
-
-                connection.Close();
+                result = connection.Query<Pessoa>(sql).ToList();
             }
 
             return result;
@@ -125,7 +75,7 @@ namespace AT_ASPNET.Repository
 
         public Pessoa GetById(int id)
         {
-            List<Pessoa> result = new List<Pessoa>();
+            Pessoa result = null;
 
             using (var connection = new SqlConnection(this.ConnectionString))
             {
@@ -134,32 +84,10 @@ namespace AT_ASPNET.Repository
                              WHERE Id = @P1
                 ";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", id);
-
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Pessoa pessoa = new Pessoa()
-                    {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Nome = reader["NomePessoa"].ToString(),
-                        Sobrenome = reader["SobrenomePessoa"].ToString(),
-                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
-                    };
-
-                    result.Add(pessoa);
-                }
-
-                connection.Close();
+                result = connection.QueryFirstOrDefault<Pessoa>(sql, new { P1 = id });
             }
 
-            return result.FirstOrDefault();
+            return result;
         }
 
         public List<Pessoa> GetByName(string nome)
@@ -170,32 +98,10 @@ namespace AT_ASPNET.Repository
             {
 
                 var sql = @" SELECT Id, NomePessoa, SobrenomePessoa, DataDeAniversario FROM Pessoa
-                             WHERE NomePessoa LIKE @P1 COLLATE SQL_Latin1_General_CP1_CI_AI OR SobrenomePessoa LIKE @P1 COLLATE SQL_Latin1_General_CP1_CI_AI
+                             WHERE NomePessoa LIKE '%' + @P1 + '%' COLLATE SQL_Latin1_General_CP1_CI_AI OR SobrenomePessoa LIKE '%' + @P1 + '%' COLLATE SQL_Latin1_General_CP1_CI_AI
                 ";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", nome);
-
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Pessoa pessoa = new Pessoa()
-                    {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Nome = reader["NomePessoa"].ToString(),
-                        Sobrenome = reader["SobrenomePessoa"].ToString(),
-                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
-                    };
-
-                    result.Add(pessoa);
-                }
-
-                connection.Close();
+                result = connection.Query<Pessoa>(sql, new { P1 = nome }).ToList();
             }
 
             return result;
@@ -216,27 +122,7 @@ namespace AT_ASPNET.Repository
                 if (connection.State != System.Data.ConnectionState.Open)
                     connection.Open();
 
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", date.Month);
-                sqlCommand.Parameters.AddWithValue("P2", date.Day);
-
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Pessoa pessoa = new Pessoa()
-                    {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Nome = reader["NomePessoa"].ToString(),
-                        Sobrenome = reader["SobrenomePessoa"].ToString(),
-                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
-                    };
-
-                    result.Add(pessoa);
-                }
-
-                connection.Close();
+                result = connection.Query<Pessoa>(sql, new { P1 = date.Month, P2 = date.Day }).ToList();
             }
 
             return result.OrderBy(pessoa => pessoa.DataDeAniversario).ToList();
@@ -256,31 +142,7 @@ namespace AT_ASPNET.Repository
                             AND (DAY(DataDeAniversario) <> @P2 OR DAY(DataDeAniversario) = @P2)
                 ";
 
-                if (connection.State != System.Data.ConnectionState.Open)
-                    connection.Open();
-
-                SqlCommand sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText = sql;
-                sqlCommand.Parameters.AddWithValue("P1", date.Month);
-                sqlCommand.Parameters.AddWithValue("P2", date.Day);
-                sqlCommand.Parameters.AddWithValue("P3", date.Date);
-
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Pessoa pessoa = new Pessoa()
-                    {
-                        Id = Convert.ToInt32(reader["Id"]),
-                        Nome = reader["NomePessoa"].ToString(),
-                        Sobrenome = reader["SobrenomePessoa"].ToString(),
-                        DataDeAniversario = Convert.ToDateTime(reader["DataDeAniversario"])
-                    };
-
-                    result.Add(pessoa);
-                }
-
-                connection.Close();
+                result = connection.Query<Pessoa>(sql, new { P1 = date.Month, P2 = date.Day, P3 = date.Date }).ToList();
             }
 
             return result.OrderBy(pessoa => pessoa.DiferencaAniversario()).ToList();

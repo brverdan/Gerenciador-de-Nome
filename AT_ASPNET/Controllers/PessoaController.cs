@@ -92,8 +92,8 @@ namespace AT_ASPNET.Controllers
             try
             {
                 var pessoaEditada = PessoaRepository.GetById(id);
-                pessoaEditada.Nome = pessoa.Nome;
-                pessoaEditada.Sobrenome = pessoa.Sobrenome;
+                pessoaEditada.NomePessoa = pessoa.NomePessoa;
+                pessoaEditada.SobrenomePessoa = pessoa.SobrenomePessoa;
                 pessoaEditada.DataDeAniversario = pessoa.DataDeAniversario;
 
                 PessoaRepository.Update(pessoaEditada);
